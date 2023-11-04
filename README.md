@@ -1,0 +1,2 @@
+# veru
+Versatile Java utilities.
