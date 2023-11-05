@@ -1,0 +1,71 @@
+buildscript {
+    repositories {
+        maven { url "https://maven.minecraftforge.net" }
+        maven { url "https://repo.spongepowered.org/repository/maven-public/" }
+        maven { url "https://plugins.gradle.org/m2/" }
+        maven { url "https://jitpack.io" }
+        mavenCentral()
+    }
+}
+
+subprojects {
+    apply plugin: "java"
+    apply plugin: "maven-publish"
+    apply plugin: "java-library"
+
+    group = "com.slatepowered.reco"
+    version = "1.0.0"
+
+    compileJava.options.encoding = 'UTF-8'
+
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+    }
+
+    java {
+        sourceCompatibility = 8
+        targetCompatibility = 8
+
+        withSourcesJar()
+        withJavadocJar()
+    }
+
+    task("install") {
+        dependsOn(tasks.getByName("publishToMavenLocal"))
+    }
+
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                groupId = project.group as String
+                artifactId = project.name
+                version = project.version as String
+                from components.java
+            }
+        }
+    }
+
+    repositories {
+        mavenCentral()
+        maven { url = "https://jitpack.io" }
+    }
+
+    dependencies {
+        implementation("org.ow2.asm:asm:9.5")
+        implementation("org.ow2.asm:asm-tree:9.4")
+        implementation("org.ow2.asm:asm-util:9.5")
+
+        testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.0")
+        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.0")
+
+        compileOnly 'org.projectlombok:lombok:1.18.30'
+        annotationProcessor 'org.projectlombok:lombok:1.18.30'
+
+        testCompileOnly 'org.projectlombok:lombok:1.18.30'
+        testAnnotationProcessor 'org.projectlombok:lombok:1.18.30'
+    }
+
+    tasks.test {
+        useJUnitPlatform()
+    }
+}
