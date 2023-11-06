@@ -30,6 +30,15 @@ subprojects {
         withJavadocJar()
     }
 
+    repositories {
+        maven {
+            url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+        }
+
+        maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
+        maven { url = 'https://oss.sonatype.org/content/repositories/central' }
+    }
+
     task("install") {
         dependsOn(tasks.getByName("publishToMavenLocal"))
     }

@@ -1,0 +1,10 @@
+group 'com.slatepowered.veru'
+version '1.0.0'
+
+dependencies {
+    compileOnly project(":veru-java8")
+    compileOnly project(":veru-text")
+    compileOnly project(":veru-text-bungee-chat")
+    compileOnly 'net.md-5:bungeecord-chat:1.16-R0.1'
+    compileOnly 'org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT'
+}

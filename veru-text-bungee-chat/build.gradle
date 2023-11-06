@@ -1,0 +1,8 @@
+group 'com.slatepowered.veru'
+version '1.0.0'
+
+dependencies {
+    compileOnly project(":veru-java8")
+    compileOnly project(":veru-text")
+    compileOnly 'net.md-5:bungeecord-chat:1.16-R0.1'
+}

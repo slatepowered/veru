@@ -1,0 +1,4 @@
+name: VeruTestPlugin
+version: 1.0.0
+description: Veru test plugin (Spigot 1.8.8)
+main: test.slatepowered.veru.VeruTestPlugin

@@ -1,0 +1,24 @@
+plugins {
+    id("com.github.johnrengelman.shadow") version "7.1.1"
+}
+
+group 'com.slatepowered.veru'
+version '1.0.0'
+
+repositories {
+    maven {
+        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+    }
+
+    maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
+    maven { url = 'https://oss.sonatype.org/content/repositories/central' }
+}
+
+dependencies {
+    compileOnly 'org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT'
+
+    implementation project(":veru-text-spigot")
+    implementation project(":veru-text-bungee-chat")
+    implementation project(":veru-text")
+    implementation project(":veru-java8")
+}

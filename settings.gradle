@@ -1,4 +1,8 @@
 rootProject.name = 'veru'
 include 'veru-java8'
-include 'veru-bungee-chat'
+include 'test-spigot-1_8_8'
+include 'veru-text-bungee'
+include 'veru-text'
+include 'veru-text-bungee-chat'
+include 'veru-text-spigot'
 

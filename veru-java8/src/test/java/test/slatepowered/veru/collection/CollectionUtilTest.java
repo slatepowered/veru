@@ -1,6 +1,6 @@
 package test.slatepowered.veru.collection;
 
-import com.slatepowered.veru.collection.ArrayUtil;
+import slatepowered.veru.collection.ArrayUtil;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
