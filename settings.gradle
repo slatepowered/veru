@@ -1,4 +1,4 @@
 rootProject.name = 'veru'
 include 'veru-java8'
-include 'veru-java8-strformatv1'
+include 'veru-bungee-chat'
 
