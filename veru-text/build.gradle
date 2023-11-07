@@ -1,4 +1,3 @@
-group 'com.slatepowered.veru'
 version '1.0.0'
 
 dependencies {

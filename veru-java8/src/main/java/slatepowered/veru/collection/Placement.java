@@ -4,15 +4,13 @@ import java.util.List;
 import java.util.function.Predicate;
 
 /**
- * Finds an index to place an element
- * of type T at inside an ordered collection
- * of type T.
- *
- * @param <T> The element type.
+ * Determines the placement of an element in an
+ * ordered collection.
  */
-public interface Placement<T> {
+@SuppressWarnings("rawtypes")
+public interface Placement {
 
-    static <T> Placement<T> at(int offset) {
+    static Placement at(int offset) {
         return (list, value) -> {
             if (offset < 0) {
                 return list.size() - 1 + offset;
@@ -22,11 +20,11 @@ public interface Placement<T> {
         };
     }
 
-    static <T> Placement<T> last() {
+    static Placement last() {
         return (list, value) -> list.size();
     }
 
-    static <T> Placement<T> last(int offset) {
+    static Placement last(int offset) {
         return (list, value) -> list.size() + offset;
     }
 
@@ -34,17 +32,18 @@ public interface Placement<T> {
     Placement FIRST = (list, value) -> 0;
 
     @SuppressWarnings("unchecked")
-    static <T> Placement<T> first() {
-        return (Placement<T>) FIRST;
+    static Placement first() {
+        return FIRST;
     }
 
-    static <T> Placement<T> before(Predicate<T> predicate) {
+    @SuppressWarnings("unchecked")
+    static <T> Placement before(Predicate<T> predicate) {
         return (list, value) -> {
             final int l = list.size();
             for (int i = 0; i < l; i++) {
-                T t = list.get(i);
+                Object t = list.get(i);
 
-                if (predicate.test(t)) {
+                if (predicate.test((T) t)) {
                     return i;
                 }
             }
@@ -63,17 +62,17 @@ public interface Placement<T> {
      * @param value The value to position.
      * @return The index or -1.
      */
-    int find(List<T> list, T value);
+    int find(List list, Object value);
 
     /** Find a position and throw an exception if no position was found. */
-    default int findChecked(List<T> list, T value) {
+    default int findChecked(List list, Object value) {
         int index = find(list, value);
         if (index == -1)
             throw new IllegalArgumentException("Could not find an index for the given element");
         return index;
     }
 
-    default void insert(List<T> list, T value) {
+    default void insert(List list, Object value) {
         list.add(findChecked(list, value), value);
     }
 

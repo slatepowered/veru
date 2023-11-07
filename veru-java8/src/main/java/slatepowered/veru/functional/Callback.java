@@ -1,6 +1,8 @@
 package slatepowered.veru.functional;
 
 
+import slatepowered.veru.collection.Placement;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -30,8 +32,14 @@ public interface Callback<V> extends Callable<V> {
             CompletableFuture<V> future;
 
             @Override
-            public Callback<V> then(Function<V, HandlerResult> consumer) {
+            public Callback<V> thenApply(Function<V, HandlerResult> consumer) {
                 this.consumer = consumer;
+                return this;
+            }
+
+            @Override
+            public Callback<V> thenApply(Function<V, HandlerResult> handler, Placement placement) {
+                this.consumer = handler;
                 return this;
             }
 
@@ -66,8 +74,14 @@ public interface Callback<V> extends Callable<V> {
             List<CompletableFuture<V>> futures = new ArrayList<>();
 
             @Override
-            public Callback<V> then(Function<V, HandlerResult> handler) {
+            public Callback<V> thenApply(Function<V, HandlerResult> handler) {
                 consumers.add(handler);
+                return this;
+            }
+
+            @Override
+            public Callback<V> thenApply(Function<V, HandlerResult> handler, Placement placement) {
+                placement.insert(consumers, handler);
                 return this;
             }
 
@@ -110,7 +124,7 @@ public interface Callback<V> extends Callable<V> {
      * @return This.
      */
     default Callback<V> then(Consumer<V> consumer) {
-        return then(v -> {
+        return thenApply(v -> {
             consumer.accept(v);
             return HandlerResult.KEEP;
         });
@@ -123,10 +137,41 @@ public interface Callback<V> extends Callable<V> {
      * one to the end of the pipeline
      * depending on the implementation.
      *
+     * @param consumer The handler.
+     * @param placement Determines the position to register the handler at.
+     * @return This.
+     */
+    default Callback<V> then(Consumer<V> consumer, Placement placement) {
+        return thenApply(v -> {
+            consumer.accept(v);
+            return HandlerResult.KEEP;
+        }, placement);
+    }
+
+    /**
+     * Register a handler for the value
+     * when called. This may replace an
+     * existing handler or append a new
+     * one to the end of the pipeline
+     * depending on the implementation.
+     *
      * @param handler The handler.
      * @return This.
      */
-    Callback<V> then(Function<V, HandlerResult> handler);
+    Callback<V> thenApply(Function<V, HandlerResult> handler);
+
+    /**
+     * Register a handler for the value
+     * when called. This may replace an
+     * existing handler or append a new
+     * one to the end of the pipeline
+     * depending on the implementation.
+     *
+     * @param handler The handler.
+     * @param placement Determines the position to register the handler at.
+     * @return This.
+     */
+    Callback<V> thenApply(Function<V, HandlerResult> handler, Placement placement);
 
     /**
      * Await a call by accepting an
