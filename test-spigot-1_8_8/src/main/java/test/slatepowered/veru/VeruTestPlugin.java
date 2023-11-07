@@ -28,10 +28,11 @@ public class VeruTestPlugin extends JavaPlugin implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
-        final String cmd = "/kill " + player.getName();
-        Text.send(player, TextComponent.parse("&8[&a+&8] &b" + player.getName() + "&3 joined the game")
-                .edit(3, c -> c.add(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                        TextComponent.parse("&8&l█ &3Player &b" + player.getName() + "\n" +
+        final String cmd = "/gamemode 0 " + player.getName();
+        Text.send(player, TextComponent.parse("&8[&a+&8] &[plr]&b" + player.getName() + "&3 joined the game")
+                .edit("plr", c -> c.add(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                        TextComponent.parse("" +
+                        "&7&l█ &3Player &b" + player.getName() + "\n" +
                         "&8&l█ &6XYZ: &e" + player.getLocation().getBlockX() + ", " + player.getLocation().getBlockY() + ", " + player.getLocation().getBlockZ() + "\n" +
                         "&8&l█ &6Gamemode: &e" + player.getGameMode() + "\n" +
                         "&8&l█ &cClick to run &f" + cmd)

@@ -57,6 +57,38 @@ public interface Pair<X, Y> {
     Pair<X, Y> setSecond(Y v);
 
     /**
+     * Creates a pair which accesses this pair in reverse.
+     *
+     * @return The reversed pair.
+     */
+    default Pair<Y, X> reverse() {
+        Pair<X, Y> pair = this;
+        return new Pair<Y, X>() {
+            @Override
+            public Y getFirst() {
+                return pair.getSecond();
+            }
+
+            @Override
+            public X getSecond() {
+                return pair.getFirst();
+            }
+
+            @Override
+            public Pair<Y, X> setFirst(Y v) {
+                pair.setSecond(v);
+                return this;
+            }
+
+            @Override
+            public Pair<Y, X> setSecond(X v) {
+                pair.setFirst(v);
+                return this;
+            }
+        };
+    }
+
+    /**
      * Create a dynamically mapping pair with
      * the given mapping functions.
      *

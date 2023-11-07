@@ -1,8 +1,6 @@
 package slatepowered.veru.text;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -44,6 +42,17 @@ public abstract class MutableComponent extends TextComponent {
     public MutableComponent append(TextComponent child) {
         this.children.add(child);
         return this;
+    }
+
+    public MutableComponent parseAndAppend(String str) {
+        return append(TextComponent.parse(str));
+    }
+
+    public MutableComponent parseAndAppend(String str, Consumer<CompoundComponent> consumer) {
+        CompoundComponent component = TextComponent.parse(str);
+        if (consumer != null)
+            consumer.accept(component);
+        return append(component);
     }
 
     @SuppressWarnings("unchecked")

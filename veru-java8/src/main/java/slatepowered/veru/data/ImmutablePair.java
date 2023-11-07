@@ -13,10 +13,6 @@ public class ImmutablePair<X, Y> implements Pair<X, Y> {
     private final X first;
     private final Y second;
 
-    public ImmutablePair<Y, X> reverse() {
-        return new ImmutablePair<>(second, first);
-    }
-
     @Override
     public Pair<X, Y> setFirst(X v) {
         return new ImmutablePair<>(v, second);

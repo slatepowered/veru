@@ -14,6 +14,8 @@ final class TextComponentParsing {
         CompoundComponent component = new CompoundComponent(); // The compound component
         StringBuilder buf = new StringBuilder();               // The buffer for literals
         Style style = Style.empty();                           // The current style
+        String tagLast = null;                                 // The last tag
+        String tag = null;                                     // The tag of the component
         while (!reader.ended()) {
             char c = reader.curr();
 
@@ -35,9 +37,19 @@ final class TextComponentParsing {
                         comp.setStyle(style);
                         style = Style.empty();
                         buf.delete(0, buf.length());
-                        component.append(comp);
+                        component.append(comp, tag);
+                        tag = tagLast;
+                        tagLast = null;
                     }
 
+                    reader.next();
+                    continue;
+                }
+
+                // check for tag
+                if (c2 == '[') {
+                    reader.next();
+                    tagLast = reader.collect(c3 -> c3 != ']');
                     reader.next();
                     continue;
                 }
@@ -82,7 +94,9 @@ final class TextComponentParsing {
                         comp.setStyle(style);
                         style = Style.empty();
                         buf.delete(0, buf.length());
-                        component.append(comp);
+                        component.append(comp, tag);
+                        tag = tagLast;
+                        tagLast = null;
                     }
 
                     style.color = color;
@@ -111,7 +125,7 @@ final class TextComponentParsing {
         if (buf.length() != 0) {
             MutableComponent comp = TextComponent.text(buf.toString());
             comp.setStyle(style);
-            component.append(comp);
+            component.append(comp, tag);
         }
 
         return component;
