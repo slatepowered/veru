@@ -355,4 +355,12 @@ public class ArrayUtil {
         return b.toString();
     }
 
+    @SuppressWarnings("unchecked")
+    public static <T> T[] concat(T[] a, T[] b) {
+        T[] c = (T[]) Array.newInstance(a.getClass().getComponentType(), a.length + b.length);
+        System.arraycopy(a, 0, c, 0, a.length);
+        System.arraycopy(b, 0, c, a.length, b.length);
+        return c;
+    }
+
 }
