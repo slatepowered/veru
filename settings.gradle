@@ -1,8 +1,10 @@
 rootProject.name = 'veru'
 include 'veru-java8'
-include 'test-spigot-1_8_8'
 include 'veru-text-bungee'
 include 'veru-text'
 include 'veru-text-bungee-chat'
 include 'veru-text-spigot'
 
+if (!System.env.JITPACK) {
+    include 'test-spigot-1_8_8'
+}
