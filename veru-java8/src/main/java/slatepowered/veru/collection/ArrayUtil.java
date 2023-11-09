@@ -357,6 +357,9 @@ public class ArrayUtil {
 
     @SuppressWarnings("unchecked")
     public static <T> T[] concat(T[] a, T[] b) {
+        if (b == null) return a;
+        if (a == null) return b;
+
         T[] c = (T[]) Array.newInstance(a.getClass().getComponentType(), a.length + b.length);
         System.arraycopy(a, 0, c, 0, a.length);
         System.arraycopy(b, 0, c, a.length, b.length);
