@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * Utilities for working with (completable) futures.
+ */
 public class FutureUtil {
 
     /**
