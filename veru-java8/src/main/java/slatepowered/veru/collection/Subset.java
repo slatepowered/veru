@@ -24,16 +24,38 @@ public class Subset<T> implements Iterable<T>, List<T> {
     }
 
     /**
+     * Filter and extract all given objects according to the
+     * predicate into a subset.
+     *
+     * @param objects The objects to filter.
+     * @param predicate The predicate.
+     * @param <T> The element type.
+     * @return The subset.
+     */
+    public static <T> Subset<T> filter(List<T> objects, Predicate<T> predicate) {
+        List<Integer> indices = new ArrayList<>();
+        int l = objects.size();
+        for (int i = 0; i < l; i++) {
+            T obj = objects.get(i);
+            if (predicate.test(obj)) {
+                indices.add(i);
+            }
+        }
+
+        return new Subset<>(objects, toIntArray(indices));
+    }
+
+    /**
      * The source list.
      */
-    private final List<Object> source;
+    private final List<T> source;
 
     /**
      * The list of indices.
      */
     private final int[] indices;
 
-    public Subset(List<Object> source, int[] indices) {
+    public Subset(List<T> source, int[] indices) {
         this.source = source;
         this.indices = indices;
     }
