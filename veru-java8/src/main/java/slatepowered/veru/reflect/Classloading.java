@@ -45,7 +45,7 @@ public class Classloading {
     }
 
     /**
-     * Get the {@link jdk.internal.loader.URLClassPath} object for the given class loader.
+     * Get the {@code jdk.internal.loader.URLClassPath} object for the given class loader.
      * This only works on Java versions which actually have this class.
      *
      * @param loader The loader.
