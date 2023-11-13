@@ -15,6 +15,10 @@ import slatepowered.veru.misc.Throwables;
  */
 public interface ThrowingCallable<V> extends Callable<V> {
 
+    public static <V> ThrowingCallable<V> of(ThrowingCallable<V> callable) {
+        return callable;
+    }
+
     /**
      * Call this callable with the
      * provided value.
