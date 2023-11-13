@@ -95,6 +95,8 @@ public class UnsafeUtil {
             areModulesSupported = true;
 
             M_Module_implAddOpens = CLASS_Module.getDeclaredMethod("implAddOpens", String.class);
+            forcePublic(M_Module_implAddOpens);
+            M_Module_implAddOpens.setAccessible(true);
 
             final Class<?> C_ModuleLayer = Class.forName("java.lang.ModuleLayer");
             final Method M_ModuleLayer_boot = C_ModuleLayer.getDeclaredMethod("boot");

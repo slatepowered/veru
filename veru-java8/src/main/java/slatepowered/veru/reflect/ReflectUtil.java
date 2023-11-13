@@ -3,7 +3,11 @@ package slatepowered.veru.reflect;
 import slatepowered.veru.misc.Throwables;
 
 import java.lang.invoke.MethodHandle;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Utilities for working with reflection.
@@ -28,6 +32,21 @@ public class ReflectUtil {
             Throwables.sneakyThrow(t);
             throw new AssertionError();
         }
+    }
+
+    /**
+     * Find all fields, including private ones, for the given class.
+     *
+     * @param klass The class.
+     * @return The list of fields.
+     */
+    public static List<Field> findAllFields(Class<?> klass) {
+        List<Field> fields = new ArrayList<>();
+        for (; klass != null; klass = klass.getSuperclass()) {
+            fields.addAll(Arrays.asList(klass.getDeclaredFields()));
+        }
+
+        return fields;
     }
 
 }
