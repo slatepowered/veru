@@ -60,4 +60,37 @@ public class FileUtil {
         Files.walk(path).forEach(p -> relativePathConsumer.accept(path.relativize(p)));
     }
 
+    /**
+     * Creates the given file and all it's parents if it does not exist.
+     *
+     * @param path The file path.
+     * @return The same file path.
+     */
+    public static Path createIfAbsent(Path path) throws IOException {
+        if (!Files.exists(path)) {
+            Path parent = path.getParent();
+            if (!Files.exists(parent)) {
+                Files.createDirectories(parent);
+            }
+
+            Files.createFile(path);
+        }
+
+        return path;
+    }
+
+    /**
+     * Creates the given directory and all it's parents if it does not exist.
+     *
+     * @param path The file path.
+     * @return The same file path.
+     */
+    public static Path createDirectoryIfAbsent(Path path) throws IOException {
+        if (!Files.exists(path)) {
+            Files.createDirectories(path);
+        }
+
+        return path;
+    }
+
 }
