@@ -1,6 +1,5 @@
 package slatepowered.veru.reflect;
 
-import jdk.internal.loader.URLClassPath;
 import slatepowered.veru.misc.Throwables;
 
 import java.lang.invoke.MethodHandle;
@@ -46,7 +45,8 @@ public class Classloading {
     }
 
     /**
-     * Get the {@link URLClassPath} object for the given class loader.
+     * Get the {@link jdk.internal.loader.URLClassPath} object for the given class loader.
+     * This only works on Java versions which actually have this class.
      *
      * @param loader The loader.
      * @return The
