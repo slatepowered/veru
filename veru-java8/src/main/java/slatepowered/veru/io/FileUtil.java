@@ -1,8 +1,11 @@
-package slatepowered.veru.file;
+package slatepowered.veru.io;
 
 import slatepowered.veru.functional.ThrowingCallable;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.function.Consumer;
@@ -91,6 +94,35 @@ public class FileUtil {
         }
 
         return path;
+    }
+
+    /**
+     * Create or overwrite the given file with the given text
+     * content using the UTF-8 encoding.
+     *
+     * @param path The file path.
+     * @param text The text content.
+     * @return The file path back.
+     */
+    public static Path overwriteWithString(Path path, String text) throws IOException {
+        createIfAbsent(path);
+        OutputStream stream = Files.newOutputStream(path);
+        stream.write(text.getBytes(StandardCharsets.UTF_8));
+        stream.close();
+        return path;
+    }
+
+    /**
+     * Reads the full contents of the given file as a UTF-8 string if it exists.
+     *
+     * @param path The file path.
+     * @return The text content.
+     */
+    public static String readString(Path path) throws IOException {
+        InputStream stream = Files.newInputStream(path);
+        byte[] bytes = IOUtil.readAllBytes(stream);
+        stream.close();
+        return new String(bytes, StandardCharsets.UTF_8);
     }
 
 }
