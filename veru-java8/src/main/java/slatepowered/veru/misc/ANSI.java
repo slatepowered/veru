@@ -18,6 +18,8 @@ public class ANSI {
     public static final String CYAN = "\u001B[36m";
     public static final String WHITE = "\u001B[37m";
 
+    //
+
     public static String getRGBForeground(int r, int g, int b) {
         return ESC + "[38;2;" + Math.min(r, 255) + ";" + Math.min(g, 255) + ";" + Math.min(b, 255)  + "m";
     }
