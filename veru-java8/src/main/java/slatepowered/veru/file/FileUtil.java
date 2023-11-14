@@ -44,7 +44,7 @@ public class FileUtil {
      * @param path The path.
      */
     public static void deleteIfPresent(Path path) throws IOException {
-        if (Files.exists(path))
+        if (!Files.exists(path))
             return;
         delete(path);
     }

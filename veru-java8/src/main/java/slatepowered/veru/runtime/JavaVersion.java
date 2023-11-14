@@ -236,6 +236,10 @@ public class JavaVersion {
         return getMajor(this.major);
     }
 
+    public boolean isSupported() {
+        return type != VersionType.UNSUPPORTED;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
