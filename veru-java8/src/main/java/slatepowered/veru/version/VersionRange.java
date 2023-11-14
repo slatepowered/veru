@@ -1,7 +1,7 @@
 package slatepowered.veru.version;
 
 /**
- * Represents a range of versions.
+ * Represents a range of {@link Version}s.
  */
 public interface VersionRange {
 
