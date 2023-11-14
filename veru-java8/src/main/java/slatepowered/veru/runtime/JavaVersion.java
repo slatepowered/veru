@@ -1,19 +1,17 @@
 package slatepowered.veru.runtime;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import slatepowered.veru.math.NumberUtil;
+import slatepowered.veru.version.Version;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Represents a Java version.
  */
-@RequiredArgsConstructor
 @Getter
-public class JavaVersion {
+public class JavaVersion extends Version {
 
     /**
      * Maps all major version numbers to a Java version object.
@@ -148,32 +146,32 @@ public class JavaVersion {
         MINOR
     }
 
+    public JavaVersion(VersionType type, String name, int classFileVersion,
+                       int major, double minor) {
+        super(major, minor);
+        this.type = type;
+        this.name = name;
+        this.classFileVersion = classFileVersion;
+    }
+
+    public JavaVersion() {
+        super();
+    }
+
     /**
      * The type of this version.
      */
-    private final VersionType type;
+    private VersionType type;
 
     /**
      * The display name of the version.
      */
-    private final String name;
+    private String name;
 
     /**
      * The class file version.
      */
-    private final int classFileVersion;
-
-    /**
-     * The major version number.
-     */
-    private final int major;
-
-    /**
-     * The minor version float, this is exclusively intended to be a way
-     * of storing arbitrary minor version information and is not meant to be
-     * a user-friendly way of representing it.
-     */
-    private final double minor;
+    private int classFileVersion;
 
     // register this java version as a major version
     // to the major version map
@@ -183,48 +181,6 @@ public class JavaVersion {
         }
 
         return this;
-    }
-
-    /**
-     * Check whether this version is greater than the given version.
-     *
-     * @param version The version to check against.
-     * @return Boolean.
-     */
-    public boolean isNewerThan(JavaVersion version) {
-        if (this.major > version.major) return true;
-        return this.minor > version.minor;
-    }
-
-    /**
-     * Check whether this version is greater than or is equal to the given version.
-     *
-     * @param version The version to check against.
-     * @return Boolean.
-     */
-    public boolean isNewerThanOrEquals(JavaVersion version) {
-        if (this.major >= version.major) return true;
-        return this.minor >= version.minor;
-    }
-
-    /**
-     * Check whether this version is older than the given version.
-     *
-     * @param version The version to check against.
-     * @return Boolean.
-     */
-    public boolean isOlderThan(JavaVersion version) {
-        return !isNewerThanOrEquals(version);
-    }
-
-    /**
-     * Check whether this version is older than or equal to the given version.
-     *
-     * @param version The version to check against.
-     * @return Boolean.
-     */
-    public boolean isOlderThanOrEquals(JavaVersion version) {
-        return !isNewerThan(version);
     }
 
     /**
@@ -238,19 +194,6 @@ public class JavaVersion {
 
     public boolean isSupported() {
         return type != VersionType.UNSUPPORTED;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        JavaVersion that = (JavaVersion) o;
-        return major == that.major && Double.compare(that.minor, minor) == 0;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(major, minor);
     }
 
     @Override
