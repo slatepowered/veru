@@ -8,3 +8,5 @@ include 'veru-text-spigot'
 if (!System.env.JITPACK) {
     include 'test-spigot-1_8_8'
 }
+include 'veru-config'
+

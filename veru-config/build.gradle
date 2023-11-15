@@ -1,0 +1,8 @@
+version '1.0.0'
+
+dependencies {
+    implementation project(":veru-java8")
+
+    compileOnly 'org.yaml:snakeyaml:1.33'
+    testImplementation 'org.yaml:snakeyaml:1.33'
+}
