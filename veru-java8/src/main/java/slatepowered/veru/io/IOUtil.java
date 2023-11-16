@@ -81,6 +81,7 @@ public class IOUtil {
             BufferedInputStream inputStream = new BufferedInputStream(url.openStream());
             FileUtil.createDirectoryIfAbsent(output.getParent());
             BufferedOutputStream outputStream = new BufferedOutputStream(Files.newOutputStream(output));
+            transfer(inputStream, outputStream, 4096);
             outputStream.close();
             inputStream.close();
         } catch (Throwable t) {
