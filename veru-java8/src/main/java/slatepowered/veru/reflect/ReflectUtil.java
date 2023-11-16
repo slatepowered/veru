@@ -3,8 +3,7 @@ package slatepowered.veru.reflect;
 import slatepowered.veru.misc.Throwables;
 
 import java.lang.invoke.MethodHandle;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -47,6 +46,37 @@ public class ReflectUtil {
         }
 
         return fields;
+    }
+
+    /**
+     * Tries to get the class for the given type, stripping any
+     * generic or other data on the type.
+     *
+     * @param type The type.
+     * @return The class representing the type.
+     */
+    public static Class<?> getClassForType(Type type) {
+        if (type == null) {
+            return null;
+        }
+
+        if (type instanceof Class) {
+            return (Class<?>) type;
+        }
+
+        if (type instanceof ParameterizedType) {
+            return getClassForType(((ParameterizedType)type).getRawType());
+        }
+
+        if (type instanceof AnnotatedType) {
+            return getClassForType(((AnnotatedType)type).getType());
+        }
+
+        if (type instanceof WildcardType) {
+            return Object.class;
+        }
+
+        throw new IllegalArgumentException("No support to get the base class from Type object of type: " + type.getClass().getSimpleName());
     }
 
 }
