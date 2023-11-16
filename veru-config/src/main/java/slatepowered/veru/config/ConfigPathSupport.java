@@ -133,7 +133,7 @@ final class ConfigPathSupport {
             }
 
             // get the value
-            current = ((Section) current).get((String) key);
+            current = ((Section) current).getMapped((String) key);
             if (current == null) {
                 // create new section
                 current = Section.memory(new HashMap<>());
