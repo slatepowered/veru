@@ -4,5 +4,7 @@ dependencies {
     implementation project(":veru-java8")
 
     compileOnly 'org.yaml:snakeyaml:1.33'
+    compileOnly 'com.moandjiezana.toml:toml4j:0.7.2'
     testImplementation 'org.yaml:snakeyaml:1.33'
+    testImplementation 'com.moandjiezana.toml:toml4j:0.7.2'
 }
