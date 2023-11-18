@@ -295,7 +295,8 @@ public interface Container<V> {
             public Container<V> set(V val) {
                 try {
                     container.set(val);
-                    callback.call(val);
+                    if (callback != null)
+                        callback.call(val);
                     for (CompletableFuture<V> future : futures)
                         future.complete(val);
                 } catch (Throwable t) {
