@@ -4,10 +4,10 @@ include 'veru-text-bungee'
 include 'veru-text'
 include 'veru-text-bungee-chat'
 include 'veru-text-spigot'
+include 'veru-config'
+include 'veru-db-v1'
 
 if (!System.env.JITPACK) {
     include 'test-spigot-1_8_8'
 }
-include 'veru-config'
-include 'veru-db'
 
