@@ -1,0 +1,7 @@
+version '1.0.0'
+
+dependencies {
+    compileOnly project(":veru-java8")
+
+    compileOnlyApi 'org.mongodb:mongodb-driver:3.12.11'
+}
