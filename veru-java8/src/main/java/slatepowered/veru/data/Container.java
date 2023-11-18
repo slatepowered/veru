@@ -1,5 +1,6 @@
 package slatepowered.veru.data;
 
+import slatepowered.veru.functional.Callback;
 import slatepowered.veru.misc.Throwables;
 
 import java.util.ArrayList;
@@ -275,6 +276,8 @@ public interface Container<V> {
     static <V> Container<V> awaitable(final Container<V> container) {
         // return new container
         return new Container<V>() {
+            // the callback
+            Callback<V> callback;
             // the futures awaiting
             final List<CompletableFuture<V>> futures = new ArrayList<>();
 
@@ -292,6 +295,7 @@ public interface Container<V> {
             public Container<V> set(V val) {
                 try {
                     container.set(val);
+                    callback.call(val);
                     for (CompletableFuture<V> future : futures)
                         future.complete(val);
                 } catch (Throwable t) {
@@ -311,6 +315,15 @@ public interface Container<V> {
             @Override
             public boolean canAwait() {
                 return true;
+            }
+
+            @Override
+            public Callback<V> callback() {
+                if (callback == null) {
+                    callback = Callback.multi();
+                }
+
+                return callback;
             }
 
             @Override
@@ -702,10 +715,8 @@ public interface Container<V> {
     }
 
     /**
-     * Awaits a value in this container
-     * if supported. If listen is set, it won't
-     * complete early if a value is already set.
-     * Otherwise, you might get a completed future
+     * Awaits a value in this container if supported. If listen is set, it won't
+     * complete early if a value is already set. Otherwise, you might get a completed future
      * if a value was already set.
      *
      * Check if it is supported using {@link Container#canAwait()}.
@@ -732,6 +743,21 @@ public interface Container<V> {
      */
     default CompletableFuture<V> await() {
         return await(false);
+    }
+
+    /**
+     * Returns a callback which is invoked every time this container is
+     * mutated.
+     *
+     * This only works if the container is awaitable, otherwise it will
+     * throw an {@link UnsupportedOperationException} when invoking this
+     * method.
+     *
+     * @throws UnsupportedOperationException If the container is not awaitable.
+     * @return The callback.
+     */
+    default Callback<V> callback() {
+        throw new UnsupportedOperationException();
     }
 
     /**
