@@ -25,7 +25,7 @@ public interface Instantiator<T> {
      */
     @SuppressWarnings("unchecked")
     static <T> Instantiator<T> fitInstantiator(Class<T> tClass, List<Object> injectableValues) {
-        int bestScore = 0;
+        int bestScore = -1;
         Constructor<?> bestFit = null;
         Object[] bestArgumentArrangement = null;
 
