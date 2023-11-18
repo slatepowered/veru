@@ -1,24 +1,24 @@
 package slatepowered.veru.temporal;
 
 import slatepowered.veru.data.Pair;
+import slatepowered.veru.string.StringReader;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class DurationParser {
 
-    private final List<Pair<ChronoUnit, String>> UNITS = new ArrayList<>();
+    private final List<Pair<ChronoUnit, String>> units = new ArrayList<>();
 
     {
-        UNITS.add(Pair.of(ChronoUnit.YEARS, "y"));
-        UNITS.add(Pair.of(ChronoUnit.DAYS, "d"));
-        UNITS.add(Pair.of(ChronoUnit.HOURS, "h"));
-        UNITS.add(Pair.of(ChronoUnit.MINUTES, "m"));
-        UNITS.add(Pair.of(ChronoUnit.SECONDS, "s"));
+        units.add(Pair.of(ChronoUnit.YEARS, "y"));
+        units.add(Pair.of(ChronoUnit.DAYS, "d"));
+        units.add(Pair.of(ChronoUnit.HOURS, "h"));
+        units.add(Pair.of(ChronoUnit.MINUTES, "m"));
+        units.add(Pair.of(ChronoUnit.SECONDS, "s"));
     }
 
     /**
@@ -29,7 +29,7 @@ public class DurationParser {
      */
     public String stringifyShort(Duration duration) {
         StringBuilder b = new StringBuilder();
-        for (Pair<ChronoUnit, String> unitPair : UNITS) {
+        for (Pair<ChronoUnit, String> unitPair : units) {
             ChronoUnit unit = unitPair.getFirst();
             String unitChar = unitPair.getSecond();
 
@@ -40,8 +40,44 @@ public class DurationParser {
             }
         }
 
-        b.delete(0, b.length() - 2);
+        b.deleteCharAt(b.length() - 2);
         return b.toString();
+    }
+
+    /**
+     * Parses a duration from the given string reader.
+     *
+     * @param reader The reader.
+     * @return The duration.
+     */
+    public Duration parse(StringReader reader) {
+        Duration duration = Duration.ZERO;
+        while (StringReader.isDigit(reader.curr(), 10)) {
+            long amount = reader.collectLong();
+            String unitShort = reader.collect(c -> (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'));
+
+            // find the pair
+            Pair<ChronoUnit, String> pair = null;
+            for (Pair<ChronoUnit, String> pair1 : units) {
+                if (pair1.getSecond().equals(unitShort)) {
+                    pair = pair1;
+                    break;
+                }
+            }
+
+            if (pair == null) {
+                throw new IllegalArgumentException("Unrecognized unit `" + unitShort + "`");
+            }
+
+            TemporalUnit unit = pair.getFirst();
+            duration = duration.plus(Duration.of(amount, unit));
+        }
+
+        return duration;
+    }
+
+    public Duration parse(String str) {
+        return parse(new StringReader(str));
     }
 
 }
