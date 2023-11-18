@@ -7,6 +7,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -16,6 +17,11 @@ import java.util.function.Supplier;
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class Configuration implements Section {
+
+    @FunctionalInterface
+    public interface ResourceFinder {
+        InputStream findResource(String name) throws Exception;
+    }
 
     /**
      * The internal map.
@@ -27,10 +33,20 @@ public class Configuration implements Section {
      */
     ConfigParser parser;
 
+    /**
+     * The resource finder.
+     */
+    ResourceFinder resourceFinder = Configuration.class::getResourceAsStream;
+
     /* Basic Getters. */
 
     public Configuration withParser(ConfigParser parser) {
         this.parser = parser;
+        return this;
+    }
+
+    public Configuration withResourceFinder(ResourceFinder finder) {
+        this.resourceFinder = finder;
         return this;
     }
 
@@ -225,7 +241,9 @@ public class Configuration implements Section {
         try {
             // open resource
             // todo: allow customization of how the resource is opened
-            InputStream is = this.getClass().getResourceAsStream(defaults);
+            if (!defaults.startsWith("/"))
+                defaults = "/" + defaults;
+            InputStream is = resourceFinder.findResource(defaults);
             if (is == null)
                 throw new IllegalArgumentException("Could not open resource '" + defaults + "'");
 
