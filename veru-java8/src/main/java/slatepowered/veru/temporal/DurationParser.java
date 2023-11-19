@@ -5,16 +5,17 @@ import slatepowered.veru.string.StringReader;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
+import java.time.temporal.IsoFields;
 import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DurationParser {
 
-    private final List<Pair<ChronoUnit, String>> units = new ArrayList<>();
+    private final List<Pair<TemporalUnit, String>> units = new ArrayList<>();
 
     {
-        units.add(Pair.of(ChronoUnit.YEARS, "y"));
+        units.add(Pair.of(TimeUnits.YEAR, "y"));
         units.add(Pair.of(ChronoUnit.DAYS, "d"));
         units.add(Pair.of(ChronoUnit.HOURS, "h"));
         units.add(Pair.of(ChronoUnit.MINUTES, "m"));
@@ -29,11 +30,11 @@ public class DurationParser {
      */
     public String stringifyShort(Duration duration) {
         StringBuilder b = new StringBuilder();
-        for (Pair<ChronoUnit, String> unitPair : units) {
-            ChronoUnit unit = unitPair.getFirst();
+        for (Pair<TemporalUnit, String> unitPair : units) {
+            TemporalUnit unit = unitPair.getFirst();
             String unitChar = unitPair.getSecond();
 
-            long amt = duration.get(unit);
+            long amt = duration.getSeconds() / unit.getDuration().getSeconds();
             if (amt > 0) {
                 duration = duration.minus(amt, unit);
                 b.append(amt).append(unitChar).append(" ");
@@ -57,8 +58,8 @@ public class DurationParser {
             String unitShort = reader.collect(c -> (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'));
 
             // find the pair
-            Pair<ChronoUnit, String> pair = null;
-            for (Pair<ChronoUnit, String> pair1 : units) {
+            Pair<TemporalUnit, String> pair = null;
+            for (Pair<TemporalUnit, String> pair1 : units) {
                 if (pair1.getSecond().equals(unitShort)) {
                     pair = pair1;
                     break;
