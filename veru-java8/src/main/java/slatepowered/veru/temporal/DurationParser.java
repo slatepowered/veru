@@ -41,7 +41,7 @@ public class DurationParser {
             }
         }
 
-        b.deleteCharAt(b.length() - 2);
+        b.deleteCharAt(b.length() - 1);
         return b.toString();
     }
 
