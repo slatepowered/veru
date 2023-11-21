@@ -32,16 +32,16 @@ public class MongoDatabaseItem extends DatabaseItem {
     // the changes to be applied
     HashMap<String, Object> changes = new HashMap<>();
     // the document as currently stored
-    Document document;
+    Document document = new Document();
 
     public MongoDatabaseItem(Database database,
                              String keyName,
                              MongoCollection<Document> collection,
                              Object key) {
         super(database);
-        this.keyName    = keyName;
+        this.keyName = keyName;
         this.collection = collection;
-        this.key        = key;
+        this.key = key;
     }
 
     public Bson createFilter() {
