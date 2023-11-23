@@ -94,7 +94,7 @@ public interface Callback<V> extends Callable<V> {
 
             @Override
             public void call(V value) {
-                {
+                if (!consumers.isEmpty()) {
                     Function<V, HandlerResult> handler = consumers.get(0);
                     for (Iterator<Function<V, HandlerResult>> it = consumers.listIterator(); it.hasNext(); handler = it.next())
                         if (handler.apply(value) == HandlerResult.REMOVE)
