@@ -68,9 +68,16 @@ public class MongoDatabaseItem extends DatabaseItem {
     @Override
     public MongoDatabaseItem push() {
         // construct update
-        Bson[] bsons = new Bson[changes.size()];
+//        Bson[] bsons = new Bson[changes.size()];
+//        int i = 0;
+//        for (Map.Entry<String, Object> entry : changes.entrySet()) {
+//            bsons[i] = Updates.set(entry.getKey(), entry.getValue());
+//            i++;
+//        }
+
+        Bson[] bsons = new Bson[document.size()];
         int i = 0;
-        for (Map.Entry<String, Object> entry : changes.entrySet()) {
+        for (Map.Entry<String, Object> entry : document.entrySet()) {
             bsons[i] = Updates.set(entry.getKey(), entry.getValue());
             i++;
         }
