@@ -1,25 +1,74 @@
 package slatepowered.veru.temporal;
 
-import slatepowered.veru.data.Pair;
+import lombok.Getter;
 import slatepowered.veru.string.StringReader;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.IsoFields;
 import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Serializes durations.
+ */
 public class DurationParser {
 
-    private final List<Pair<TemporalUnit, String>> units = new ArrayList<>();
+    @Getter
+    static class UnitDef implements Comparable<UnitDef> {
+        final TemporalUnit unit; // The time unit
+        final String alias;      // The alias
+        final long nanos;        // The nanos per unit
 
-    {
-        units.add(Pair.of(TimeUnits.YEAR, "y"));
-        units.add(Pair.of(ChronoUnit.DAYS, "d"));
-        units.add(Pair.of(ChronoUnit.HOURS, "h"));
-        units.add(Pair.of(ChronoUnit.MINUTES, "m"));
-        units.add(Pair.of(ChronoUnit.SECONDS, "s"));
+        public UnitDef(TemporalUnit unit, String alias) {
+            this.unit = unit;
+            this.alias = alias;
+            this.nanos = Durations.toNanos(unit.getDuration());
+        }
+
+        @Override
+        public int compareTo(UnitDef o) {
+            return unit.getDuration().compareTo(o.getUnit().getDuration());
+        }
+    }
+
+    static final List<UnitDef> STANDARD_UNITS = new ArrayList<>();
+
+    static {
+        STANDARD_UNITS.add(new UnitDef(TimeUnits.YEAR, "y"));
+        STANDARD_UNITS.add(new UnitDef(ChronoUnit.DAYS, "d"));
+        STANDARD_UNITS.add(new UnitDef(ChronoUnit.HOURS, "h"));
+        STANDARD_UNITS.add(new UnitDef(ChronoUnit.MINUTES, "m"));
+        STANDARD_UNITS.add(new UnitDef(ChronoUnit.SECONDS, "s"));
+    }
+
+    /**
+     * The list of units sorted from longest to shortest.
+     */
+    private List<UnitDef> units = STANDARD_UNITS;
+
+    /**
+     * The decimal format to use for the last unit.
+     */
+    private NumberFormat numberFormat;
+
+    public DurationParser withUnit(TemporalUnit unit, String alias) {
+        if (units == STANDARD_UNITS) {
+            // clone list if were still using the shared
+            // standard units instance as it is mutable
+            units = new ArrayList<>(units);
+        }
+
+        units.add(new UnitDef(unit, alias));
+        units.sort(UnitDef::compareTo);
+        return this;
+    }
+
+    public DurationParser withNumberFormat(NumberFormat format) {
+        this.numberFormat = format;
+        return this;
     }
 
     /**
@@ -29,19 +78,36 @@ public class DurationParser {
      * @return The short form string.
      */
     public String stringifyShort(Duration duration) {
-        StringBuilder b = new StringBuilder();
-        for (Pair<TemporalUnit, String> unitPair : units) {
-            TemporalUnit unit = unitPair.getFirst();
-            String unitChar = unitPair.getSecond();
+        long durationNanos = Durations.toNanos(duration);
 
-            long amt = duration.getSeconds() / unit.getDuration().getSeconds();
-            if (amt > 0) {
-                duration = duration.minus(amt, unit);
-                b.append(amt).append(unitChar).append(" ");
+        StringBuilder b = new StringBuilder();
+        int length = units.size();
+        for (int i = 0; i < length; i++) {
+            UnitDef unitDef = units.get(i);
+
+            long unitNanos = unitDef.getNanos();
+            double amount = (double)durationNanos / unitNanos;
+//            System.out.println("unit: " + unitDef.getUnit() + " (" + unitDef.getAlias() + ") nanos: " + unitNanos + ", remaining nanos: " + durationNanos + ", amount = " + amount);
+
+            if /* last unit */ (i >= length - 1 && numberFormat != null) {
+                if (amount >= 0.001) {
+                    b.append(numberFormat.format(amount)).append(unitDef.getAlias()).append(" ");
+                }
+            } else {
+                amount = (long) Math.floor(amount);
+
+                if (amount >= 1) {
+                    b.append((long) amount).append(unitDef.getAlias()).append(" ");
+                    durationNanos -= amount * unitNanos;
+                }
             }
         }
 
-        b.deleteCharAt(b.length() - 1);
+        // delete trailing space if there is any text
+        if (b.length() > 0) {
+            b.deleteCharAt(b.length() - 1);
+        }
+
         return b.toString();
     }
 
@@ -54,24 +120,24 @@ public class DurationParser {
     public Duration parse(StringReader reader) {
         Duration duration = Duration.ZERO;
         while (StringReader.isDigit(reader.curr(), 10)) {
-            long amount = reader.collectLong();
+            double amount = reader.collectDouble();
             String unitShort = reader.collect(c -> (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'));
 
             // find the pair
-            Pair<TemporalUnit, String> pair = null;
-            for (Pair<TemporalUnit, String> pair1 : units) {
-                if (pair1.getSecond().equals(unitShort)) {
-                    pair = pair1;
+            UnitDef def = null;
+            for (UnitDef unitDef : units) {
+                if (unitDef.getAlias().equals(unitShort)) {
+                    def = unitDef;
                     break;
                 }
             }
 
-            if (pair == null) {
+            if (def == null) {
                 throw new IllegalArgumentException("Unrecognized unit `" + unitShort + "`");
             }
 
-            TemporalUnit unit = pair.getFirst();
-            duration = duration.plus(Duration.of(amount, unit));
+            TemporalUnit unit = def.getUnit();
+            duration = duration.plus(Durations.fractional(amount, unit));
         }
 
         return duration;
