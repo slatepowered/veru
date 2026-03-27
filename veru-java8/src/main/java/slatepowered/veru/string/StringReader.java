@@ -543,14 +543,16 @@ public class StringReader implements Iterable<Character> {
      *
      * @param predicate The character predicate.
      * @param offEnd The offset to skip at the end.
-     * @return This.
+     * @return The amount of characters consumed.
      */
-    public StringReader consume(Predicate<Character> predicate, int offEnd) {
+    public int consume(Predicate<Character> predicate, int offEnd) {
+        int i = index;
         char c = current();
         while (c != DONE && predicate.test(c))
             c = next();
+        i = index - i;
         next(offEnd);
-        return this;
+        return i;
     }
 
     /**
@@ -558,14 +560,18 @@ public class StringReader implements Iterable<Character> {
      * the predicate or the end of the string is reached.
      *
      * @param predicate The character predicate.
-     * @return This.
+     * @return The amount of characters consumed.
      */
-    public StringReader consume(Predicate<Character> predicate) {
-        return consume(predicate, 0);
+    public int consume(Predicate<Character> predicate) {
+        int i = index;
+        char c = current();
+        while (c != DONE && predicate.test(c))
+            c = next();
+        return index - i;
     }
 
     // skips all whitespace
-    public StringReader consumeWhitespace() {
+    public int consumeWhitespace() {
         return consume(Character::isWhitespace);
     }
 
