@@ -545,7 +545,42 @@ public class StringReader implements Iterable<Character> {
      * @param offEnd The offset to skip at the end.
      * @return The amount of characters consumed.
      */
-    public int consume(Predicate<Character> predicate, int offEnd) {
+    public StringReader consume(Predicate<Character> predicate, int offEnd) {
+        char c = current();
+        while (c != DONE && predicate.test(c))
+            c = next();
+        next(offEnd);
+        return this;
+    }
+
+    /**
+     * Skips characters until a character doesn't match
+     * the predicate or the end of the string is reached.
+     *
+     * @param predicate The character predicate.
+     * @return The amount of characters consumed.
+     */
+    public StringReader consume(Predicate<Character> predicate) {
+        char c = current();
+        while (c != DONE && predicate.test(c))
+            c = next();
+        return this;
+    }
+
+    // skips all whitespace
+    public StringReader consumeWhitespace() {
+        return consume(Character::isWhitespace);
+    }
+
+    /**
+     * Skips characters until a character doesn't match
+     * the predicate or the end of the string is reached.
+     *
+     * @param predicate The character predicate.
+     * @param offEnd The offset to skip at the end.
+     * @return The amount of characters consumed.
+     */
+    public int cconsume(Predicate<Character> predicate, int offEnd) {
         int i = index;
         char c = current();
         while (c != DONE && predicate.test(c))
@@ -562,7 +597,7 @@ public class StringReader implements Iterable<Character> {
      * @param predicate The character predicate.
      * @return The amount of characters consumed.
      */
-    public int consume(Predicate<Character> predicate) {
+    public int cconsume(Predicate<Character> predicate) {
         int i = index;
         char c = current();
         while (c != DONE && predicate.test(c))
@@ -571,8 +606,8 @@ public class StringReader implements Iterable<Character> {
     }
 
     // skips all whitespace
-    public int consumeWhitespace() {
-        return consume(Character::isWhitespace);
+    public int cconsumeWhitespace() {
+        return cconsume(Character::isWhitespace);
     }
 
     /**
